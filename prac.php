@@ -1,102 +1,133 @@
 <?php
 
-class menu {
-    public static $menu = [
-        1 => "Deposit Money",
-        2 => "Deposit Money",
-        3 => "Withdraw Money",
-        4 => "Last 5 transaction",
-        5 => "Deactivate  Account",
-        6 => "Leave System"
-    ];
+interface updateBalance
+{
+    public function updateBalance($currentBalance);
 }
 
-class account {
-    private $accountNumber = null;
-    protected $balance = 0;
-
-    function __construct($accountNumber, $amount){
-        $this->accountNumber = $accountNumber;
-        $this->balance = $amount;
-    }
-    
-    function getAccountNumber(){
-        return $this->accountNumber;
-    }
-    
-    function getBalance(){
-        return $this->balance;
-    }
-}
-
-class openAccount extends account {
-    
-    function __construct(){
-        echo "Welcome \n";
-
-        parent::__construct($this->generateRandomNumber(),0);
-        
-        echo "Your new account number is: ".$this->getAccountNumber()."\n";
-    }
-
-    function generateRandomNumber(){
-        $digit = 8;
+trait RandomNumberTrait {
+    public function generateRandomNumber($digit) {
         return rand(pow(10, $digit-1), pow(10, $digit)-1);
     }
 }
 
-class deposit extends account{
-    $value = 0;
-
-    function __construct($value){
-        if($value>0){
-            $this->value = $value;
-        }else{
-            echo "something went wrong";
-        }
-        
-    }
-
-    function depositFunction($amount){
-        $this->balance+=$amount;
+trait ErrorTrait {
+    public function errorMessage(){
+        return "something went wrong";
     }
 }
 
-$ob1 = new openAccount();
+class menu {
+    public static $menu = [
+        1 => "Open Account",
+        2 => "Check Balance",
+        3 => "Deposit Money",
+        4 => "Withdraw Money",
+        5 => "Last 5 transaction",
+        6 => "Deactivate  Account",
+        7 => "Leave System"
+    ];
+}
 
-    
+class Bank {
+    public $accounts = [];
+
+    function openAccount($account){
+        $this->accounts[] = $account;
+    }
+
+    function getAccountBalance($accountNumber){
+        echo array_search($accountNumber, array_column($this->accounts, 'accountNumber'));
+    }
+
+    function setBalance($accountNumber,$deposit){
+        
+    }
+}
+
+class OpenAccount{
+    use RandomNumberTrait;
+
+    public $name = null;
+
+    function __construct(){
+        $this->setName();        
+    }
+
+    function setName(){
+        echo "Please enter your name: ";
+        $this->name = readline();
+    }
+
+    function accountDetails(){
+        return ([
+            "name"          => $this->name,
+            "accountNumber" => $this->generateRandomNumber(8), 
+            "balance"       => 0
+        ]);
+    }
+}
+
+class deposit implements updateBalance{
+    use ErrorTrait;
+
+    public $amount = 0;
+
+    function __construct($amount){
+        if($amount>0){
+            $this->amount = $amount;
+        }else{
+            echo $this->errorMessage();
+        }
+    }
+
+    function updateBalance($currentBalance){
+        return $currentBalance+$this->amount;
+    }
+}
+
+$bank = new Bank();
+
 while(1){
     echo "\n"."Chose an Option \n \n";
     foreach(menu::$menu as $key => $m){
         echo $key ." => ". $m ."\n";
-        
     }
     echo "\n";
     
-    $x = readline();
-    
-    switch ($x) {
+    switch (readline()) {
         case "1":
-            echo "\n how much you want to deposit? \n";
-            $deposit = readline();
+            $newAccount = new OpenAccount();
+            $accountDetails = $newAccount->accountDetails();
+            $bank->openAccount($accountDetails);
+            echo "Congratulation your account is created. \n your account number is: ".$accountDetails['accountNumber'];
             break;
         case "2":
-            echo "Withdrawing Money";
+            echo "Enter your account number: ";
+            $balance = $bank->getAccountBalance(readline());
+            echo "\nyour current balance is: ". $balance;
             break;
         case "3":
-            echo "Last 5 transaction";
+            echo "\nEnter your account number: ";
+            $accountNumber = readline();
+            echo "\nhow much you want to deposit? \n";
+            $deposit = new deposit(readline());
+            $bank->setBalance($accountNumber,$deposit);
             break;
         case "4":
-            echo "Deactivate the account";
+            echo "Withdrawing Money";
             break;
         case "5":
-            echo "Leaving the system";
+            echo "Last 5 transaction";
             break;
         case "6":
+            echo "Deactivate the account";
+            break;
+        case "7":
             echo "Leaving the system";
             break;
-      default:
-        echo "Wrong Input";
+        default:
+            echo "Wrong Input";
     }
     
     echo "\n";
