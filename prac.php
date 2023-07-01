@@ -32,12 +32,12 @@ class menu {
 class Bank {
     public $accounts = [];
 
-    function openAccount($account){
+    function appendAccount($account){
         $this->accounts[] = $account;
     }
 
     function getAccountBalance($accountNumber){
-        echo array_search($accountNumber, array_column($this->accounts, 'accountNumber'));
+        print_r( $this->accounts );
     }
 
     function setBalance($accountNumber,$deposit){
@@ -60,11 +60,12 @@ class OpenAccount{
     }
 
     function accountDetails(){
-        return ([
+        $account[$this->generateRandomNumber(8)] = [
             "name"          => $this->name,
-            "accountNumber" => $this->generateRandomNumber(8), 
             "balance"       => 0
-        ]);
+        ];
+
+        return $account;
     }
 }
 
@@ -99,8 +100,8 @@ while(1){
         case "1":
             $newAccount = new OpenAccount();
             $accountDetails = $newAccount->accountDetails();
-            $bank->openAccount($accountDetails);
-            echo "Congratulation your account is created. \n your account number is: ".$accountDetails['accountNumber'];
+            $bank->appendAccount($accountDetails);
+            echo "Congratulation your account is created. \n your account number is: ".key($accountDetails);
             break;
         case "2":
             echo "Enter your account number: ";
