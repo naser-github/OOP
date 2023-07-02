@@ -112,6 +112,8 @@ class withdraw implements updateBalance{
 
 $bank = new Bank();
 
+$flag = false;
+
 while(1){
     echo "\n"."Chose an Option \n \n";
     foreach(menu::$menu as $key => $m){
@@ -151,11 +153,14 @@ while(1){
             $bank->deleteAccount(readline());
             break;
         case "7":
-            echo "Leaving the system";
+            $flag = true;
+            echo "Leaving the system\n";
             break;
         default:
             echo "Wrong Input";
     }
+
+    if($flag) break;
     
     echo "\n";
 }
