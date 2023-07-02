@@ -9,9 +9,8 @@ class menu {
         2 => "Check Balance",
         3 => "Deposit Money",
         4 => "Withdraw Money",
-        // 5 => "Last 5 transaction",
-        6 => "Delete  Account",
-        7 => "Leave System"
+        5 => "Delete  Account",
+        6 => "Leave System"
     ];
 }
 
@@ -132,13 +131,10 @@ while(1){
             $bank->setBalance($accountNumber,new withdraw(readline()));
             break;
         case "5":
-            echo "Last 5 transaction";
-            break;
-        case "6":
             echo "\nEnter your account number: ";
             $bank->deleteAccount(readline());
             break;
-        case "7":
+        case "6":
             $flag = true;
             echo "Leaving the system\n";
             break;
