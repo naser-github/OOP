@@ -3,6 +3,11 @@
 include 'interface.php';
 include 'trait.php';
 
+// require __DIR__ . '/interface.php';
+// require __DIR__ . '/trait.php';
+
+
+
 class menu {
     public static $menu = [
         1 => "Open Account",
